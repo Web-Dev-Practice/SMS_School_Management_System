@@ -1,3 +1,8 @@
+<?php  
+    // Connection with database
+    require 'partials/_dbconnect.php';  
+
+?>
 <!doctype html>
 <html lang="en">
 
@@ -27,8 +32,6 @@
 </head>
 
 <body>
-    <!-- Connection with databse  -->
-    <?php require 'partials/_dbconnect.php' ?>
     <!-- Header NavBar -->
     <?php include 'partials/_header.php' ?>
     <?php include 'partials/_addEventDetails.php'?>
@@ -53,6 +56,17 @@
             <!-- Menu Item Content  -->
             <div class="col-7">
                 <div class="tab-content" id="nav-tabContent">
+                    <?php 
+                    if(isset($_GET['delete'])){
+                        $sno = $_GET['delete'];
+                        
+                        $sql = "DELETE FROM `calender` WHERE `calender`.`Sr.No.` = $sno";
+                        $result = mysqli_query($conn, $sql);
+                        if($result){
+                            include 'lil_Elements/_alertDelete.php';
+                        }
+                    } 
+                ?>
                     <div class="tab-pane fade show active" id="list-home" role="tabpanel"
                         aria-labelledby="list-home-list">
                         <a href="partials/_addEventDetails.php" type="button"
@@ -69,26 +83,30 @@
                 </div>
                 <!-- Events Cards Starts Here  -->
                 <?php 
+                                       
                     $sql = "SELECT * FROM `calender`";
                     $result = mysqli_query($conn, $sql);
                     
                     while($row = mysqli_fetch_assoc($result)){
+                        $e_srno = $row['Sr.No.'];
                         $e_title = $row['event_heading'];
                         $e_desc = $row['event_description'];
+                        $e_type = $row['event_type'];
                         $e_venue = $row['event_venue'];
                         $e_date = $row['event_date'];
 
                         echo '<div class="card mx-5 mb-3">
                         <div class="card-body">
                             <div>
-                                <p class="font-weight-bold float-left">'.$e_title.'</p>
+                                <p class="font-weight-bold float-left edit_event_title">'.$e_title.'</p>
                                 <h6 class="font-weight-bold badge badge-info text-wrap float-right">'.$e_date.'</h6>
                             </div>
                             <p class="card-text">'.$e_desc.'</p>
-                            <a href="partials/_editEventDetails.php" type="button" class="btn btn-warning text-white edit" data-toggle="modal" data-target="#editEventDetailsModal">
+                            <h6 class="badge badge-primary text-wrap float-right ml-2">'.$e_type.'</h6>
+                            <a href="partials/_editEventDetails.php" type="button" class="btn btn-warning text-white edit" id="'.$e_srno.'" data-toggle="modal" data-target="#editEventDetailsModal">
                                 Edit Event
                             </a>
-                            <a href="#" class="btn btn-danger">Delete Event</a>
+                            <a href="#" class="btn btn-danger delete" id="del'.$e_srno.'">Delete Event</a>
                             <h6 class="badge badge-success text-wrap float-right">'.$e_venue.'</h6>
                         </div>
                     </div>';
@@ -119,16 +137,31 @@
     edits = document.getElementsByClassName('edit');
     Array.from(edits).forEach((element) => {
         element.addEventListener("click", (e) => {
-            console.log("edit To Update Event Details ");
-            // tr = e.target.parentNode.parentNode;
-            // title = tr.getElementsByTagName("td")[0].innerText;
-            // description = tr.getElementsByTagName("td")[1].innerText;
-            // console.log(title, description);
-            // textEdit.value = title;
-            // descEdit.value = description;
-            // snoEdit.value = e.target.id;
-            // console.log(e.target.id);
-            // $('#editModal').modal('toggle');
+            tr = e.target.parentNode;
+            title = tr.getElementsByTagName("p")[0].innerText;
+            description = tr.getElementsByTagName("p")[1].innerText;
+            date = tr.getElementsByTagName("h6")[0].innerText;
+            type = tr.getElementsByTagName("h6")[1].innerText;
+            venue = tr.getElementsByTagName("h6")[2].innerText;
+            editEventSrNo.value = e.target.id;
+            editEventTitle.value = title;
+            editEventDescription.value = description;
+            editEventDate.value = date;
+            editEventType.value = type;
+            editEventVenue.value = venue;
+
+        })
+    })
+    deletes = document.getElementsByClassName('delete');
+    Array.from(deletes).forEach((element) => {
+        element.addEventListener("click", (e) => {
+            sno = e.target.id.substr(3, );
+            if (confirm("Are You Sure! You want to delete this event.")) {
+                window.location = `/SMS/docs/main.php?delete=${sno}`;
+            } else {
+
+            }
+
         })
     })
     </script>

@@ -1,31 +1,6 @@
-<?php 
-
-    // Including Database Here 
-    include '_dbconnect.php';
-
-    if($_SERVER['REQUEST_METHOD']=='POST'){
-        $e_title = $_POST['e_title'];
-        $e_desc = $_POST['e_desc'];
-        $e_type = $_POST['e_type'];
-        $e_venue = $_POST['e_venue'];
-        $e_date = $_POST['e_date'];
-        
-        $sql = "INSERT INTO `calender` (`event_heading`, `event_description`, `event_type`, `event_venue`, `event_date`) VALUES ('$e_title', '$e_desc', '$e_type', '$e_venue', '$e_date');";
-        $result = mysqli_query($conn, $sql);
-        
-        if($result){
-            include 'lil_Elements/_alertSuccess.php';
-        }
-    }
-
-    
-
+<?php
+    include 'partials/_handleEventDetails.php';
 ?>
-<!-- <button type="button" class="btn btn-primary float-right my-3 mx-5" data-toggle="modal"
-    data-target="#addEventDetailsModal">
-    Add New Event
-</button> -->
-
 <!-- Modal -->
 <div class="modal fade" id="addEventDetailsModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
     aria-labelledby="addEventDetailsModalLabel" aria-hidden="true">
